@@ -9,7 +9,9 @@ import (
 	"net"
 	"sync"
 
+	"github.com/TheSmallBoat/cabinet"
 	sr "github.com/TheSmallBoat/carlo/streaming_rpc"
+	"github.com/TheSmallBoat/marina"
 	"github.com/lithdew/kademlia"
 )
 
@@ -25,6 +27,9 @@ type Node struct {
 	lns []net.Listener
 
 	StreamNode *sr.StreamNode
+
+	TwinPool  *marina.TwinsPool
+	TopicTree *cabinet.TTree
 
 	wg sync.WaitGroup
 }
@@ -136,11 +141,16 @@ func (n *Node) StartWithKeyAndServiceAndProbeAddrs(sk kademlia.PrivateKey, servi
 
 	n.StreamNode.Bootstrap()
 
+	n.TwinPool = marina.NewTwinsPool()
+	n.TopicTree = cabinet.NewTopicTree()
+
 	return nil
 }
 
 func (n *Node) Shutdown() {
 	n.StreamNode.Shutdown()
+	n.TwinPool.Close()
+	_ = n.TopicTree.Close()
 
 	for _, ln := range n.lns {
 		_ = ln.Close()
