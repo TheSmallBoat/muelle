@@ -28,10 +28,21 @@ type Node struct {
 
 	StreamNode *sr.StreamNode
 
-	TwinPool  *marina.TwinsPool
-	TopicTree *cabinet.TTree
+	tp     *marina.TwinsPool
+	tt     *cabinet.TTree
+	subSrv *subscriptionService
 
 	wg sync.WaitGroup
+}
+
+func (n *Node) InitAddrs(pubAddr string, bindAddrs []string) {
+	n.PublicAddr = pubAddr
+	n.BindAddrs = bindAddrs
+
+	n.tp = marina.NewTwinsPool()
+	n.tt = cabinet.NewTopicTree()
+	n.subSrv = NewSubscriptionService(n.tp, n.tt, subscriptionHandler)
+
 }
 
 func (n *Node) StartWithKeyAndServiceAndProbeAddrs(sk kademlia.PrivateKey, services map[string]sr.Handler, probeAddrs ...string) error {
@@ -140,9 +151,6 @@ func (n *Node) StartWithKeyAndServiceAndProbeAddrs(sk kademlia.PrivateKey, servi
 	}
 
 	n.StreamNode.Bootstrap()
-
-	n.TwinPool = marina.NewTwinsPool()
-	n.TopicTree = cabinet.NewTopicTree()
 
 	return nil
 }
