@@ -10,12 +10,26 @@ const (
 	QosHeader       = "HQ"
 	BodyTitleHeader = "HBT"
 
-	ActionPublish   = "AP"
-	ActionSubscribe = "AS"
+	ResponseActionHeader = "HRA"
+	ResponseStatusHeader = "HRS"
 
+	ActionTwin        = "AT"
+	ActionPublish     = "AP"
+	ActionSubscribe   = "AS"
+	ActionUnSubscribe = "AUS"
+
+	ResponseTwinHeader      = "RT"
 	ResponsePublishHeader   = "RP"
 	ResponseSubscribeHeader = "RS"
 
 	ResponseSuccess = "s"
 	ResponseFailure = "f"
+
+	//BodyTitle
+	ServiceError = "service-error"
+	ActionError  = "action-error"
+	ProcessTime  = "process-time"
+	PayLoad      = "PayLoad"
 )
+
+var MuNode = &Node{}
